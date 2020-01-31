@@ -1,4 +1,5 @@
-
+#Title: SVM Machine Learning in R
+#Author: Mustafa, Asma 
 #Dataset Citation:
 # author = "Dua, Dheeru and Graff, Casey",
 # year = "2017",
