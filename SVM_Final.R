@@ -8,6 +8,16 @@
 #institution = "University of California, Irvine, School of Information and Computer Sciences" }
 # data info. is available at:https://archive.ics.uci.edu/ml/datasets/Breast+Cancer+Wisconsin+(Diagnostic)
 
+#Intro:
+#SVM: support vector machine generates a hyperplane (or group of hyperplanes) that maximize the
+#margin width between two classes. By mapping the non-linear variable to a higher dimension, variable
+#will become more linear allowing svm model to separate data points into two classes
+
+#The Advantage of using SVM that it builds a highly accurate model problem-oriented kernel and uses regularization term to avoid over-fitting. 
+# The main LIMITAION of SVM is its speed and size. (not fit for large size data)
+
+#From R: Recipes for Analysis, Visualization and Machine Learning
+#by Viswa Viswanathan (Author), Shanthi Viswanathan  (Author), Atmajitsinh Gohil (Author), Chiu (David Chiu), Yu-Wei (Author)
 
 ###########
 #Packages:#
