@@ -35,6 +35,8 @@ wdbc$diagnosis=factor(wdbc$diagnosis)
 # data description documents stated that there is no NA, but this is a good practice.
 sapply(wdbc, function(x) sum(is.na(x))) 
 
+#Remove the id col. is doesn't contribute to the model predictivity
+wdbc=wdbc[,-1]
 
 #Visualize Highly Correlated Data
 pairs(wdbc[3:7],main="Wisconsin Diagnostic Breast Cancer Data", pch =21, bg=c("red","green","blue"))
@@ -46,11 +48,11 @@ pairs(wdbc[11:15],main="Wisconsin Diagnostic Breast Cancer Data", pch =21, bg=c(
 
 
 # Calculate collinearity
-wdbc_cor <- cor(wdbc[,3:32])
+wdbc_cor <- cor(wdbc[,3:31])
 wdbc_cor
 
 #Finding Highly Correlated columns
-highlyCor <- colnames(wdbc)[findCorrelation(corMatMy, cutoff = 0.9, verbose = TRUE)]
+highlyCor <- colnames(wdbc)[findCorrelation(wdbc_cor, cutoff = 0.9, verbose = TRUE)]
 highlyCor
 
 #Removing highly correlated columns (correlation above 0.9, higher mean col) to avoid bias-overffiting:
@@ -78,9 +80,9 @@ testset   <- wdbc_clean[-t.idx,]
 #TRAINING without gamma cost best parameters:
 svm.model <- svm(trainset$diagnosis ~ ., data = trainset, type='C-classification' )
 Summary_NO_tune=table(trainset$diagnosis, fitted(svm.model), dnn = c("Actual", "Predicted_NoTune"))
-
+Summary_NO_tune
 #PREDICTING 
-svm.pred  <- predict(svm.model, testset)
+svm.pred  <- predict(svm.model, testset[,-1])
 
 #confusion Matrix for predicting model
 cm_svm.pred_NoTune <- confusionMatrix(svm.pred, testset$diagnosis, positive = "M")
@@ -97,15 +99,13 @@ tuned
 
 
 #TRAINING with gamma, cost parameters selected by the tune.svm function:
-
 svm.model_tuned <- svm(trainset$diagnosis ~ ., data = trainset, type='C-classification', gamma= 0.01, cost=10,kernel="radial",cross=10 )
-Summary_Tune=table(trainset$diagnosis, fitted(svm.model_tuned), dnn = c("Actual", "Predicted_Tune"))
+Summary_Tune_mod=table(trainset$diagnosis, fitted(svm.model_tuned), dnn = c("Actual", "Predicted_Tune"))
+Summary_Tune_mod
+
 
 #PREDICTING again!
-svm.pred_tuned  <- predict(svm.model_tuned, testset)
-
-
-
+svm.pred_tuned  <- predict(svm.model_tuned, testset[,-1])
 
 #confusion Matrix for tuned predicting model
 cm_svm.pred_Tune <- confusionMatrix(svm.pred_tuned, testset$diagnosis, positive = "M")
@@ -116,43 +116,16 @@ compare_Pred_Results=cbind(cm_svm.pred_NoTune$table,cm_svm.pred_Tune$table)
 compare_Pred_Results
 
 
-#IF Time allows
-# par(mfrow=c(1,1))
-# 
-# class(svm.pred_tuned)
-# roc.perf = performance(svm.pred, measure = "tpr", x.measure = "fpr")
-# plot(roc.perf)
-# abline(a=0, b= 1)
-# 
+#### IF Time allows ####
+par(mfrow=c(1,1))
 
-# 
-# perf <- performance(svm.pred_tuned,  measure = "tpr", x.measure = "fpr")
-# 
-# heatcols <- heat.colors(9)
-# heatcols <- rainbow(11)
-# plot(perf, colorize = TRUE,colorkey=TRUE,colorize.palette=heatcols,lwd=4)
-# 
-
-# ## sensitivity/specificity curve (x-axis: specificity,
-# ## y-axis: sensitivity)
-# 
-# perf <- performance(svm.pred, "sens", "spec")
-# 
-# 
-# plot(perf, add = TRUE, colorize = TRUE,colorkey=TRUE,colorize.palette=heatcols,lwd=4)
-# 
-
-
-
-
-
-
-
-
-
-
-
-
-
+ class(svm.pred_tuned)
+ pred<-prediction(as.numeric(svm.pred_tuned), as.numeric(testset$diagnosis))
+ perf<-performance(pred,"tpr","fpr")
+heatcols <- heat.colors(9)
+heatcols <- rainbow(11)
+plot(perf, colorize = TRUE,colorkey=TRUE,colorize.palette=heatcols,lwd=4)
+ 
+ 
 
 
