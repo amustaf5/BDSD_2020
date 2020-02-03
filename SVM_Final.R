@@ -31,7 +31,7 @@ library(ROCR)
 library(kernlab)
 
 #Data Processing and Visualization:
-setwd("workshop_files“) 
+setwd("workshop_files") 
 
 #Reading the dataset for more information about the dataset description, please visit: "http://archive.ics.uci.edu/ml",
 wdbc <- read.csv('WDBC.csv',head=T)
